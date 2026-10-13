@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Полный разбор кода — построчно</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            font-family: 'Montserrat', 'Segoe UI', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            padding: 2rem 1.5rem 6rem 1.5rem;
+            line-height: 1.6;
+        }
+
+        main { max-width: 1100px; margin: 0 auto; }
+
+        .main-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #a259ff, #66d9ff, #00ffa3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .lead {
+            font-size: 1.05rem;
+            opacity: 0.85;
+            margin-bottom: 2rem;
+        }
+
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            padding: 0.9rem;
+            margin: -2rem -1.5rem 2rem -1.5rem;
+            background: rgba(9, 10, 15, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .top-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            padding: 0.5rem 0.95rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .top-nav a:hover {
+            transform: translateY(-2px);
+            background: rgba(162, 89, 255, 0.25);
+            border-color: #a259ff;
+        }
+
+        .block {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 18px;
+            padding: 1.8rem 2rem;
+            margin: 2rem 0;
+        }
+
+        .block h2 {
+            font-size: 1.4rem;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 42px;
+            height: 32px;
+            padding: 0 0.7rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .num-html { background: rgba(255, 138, 0, 0.2); color: #ffb347; }
+        .num-css  { background: rgba(102, 217, 255, 0.2); color: #66d9ff; }
+        .num-js   { background: rgba(255, 230, 0, 0.2); color: #ffe600; }
+
+        .block > p {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .block h3 {
+            font-size: 1.1rem;
+            color: #a259ff;
+            margin: 1.8rem 0 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .block h3::before {
+            content: '◆';
+            font-size: 0.7rem;
+        }
+
+        .line {
+            display: grid;
+            grid-template-columns: 50px 1fr;
+            gap: 1rem;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            align-items: start;
+        }
+        .line:last-child { border-bottom: none; }
+
+        .line-num {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.8rem;
+            color: #6a737d;
+            text-align: right;
+            padding-top: 0.5rem;
+            user-select: none;
+        }
+
+        .line-content { min-width: 0; }
+
+        .line-code {
+            background: rgba(0, 0, 0, 0.45);
+            border-left: 3px solid rgba(162, 89, 255, 0.5);
+            border-radius: 6px;
+            padding: 0.55rem 0.9rem;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.83rem;
+            overflow-x: auto;
+            white-space: pre;
+            margin-bottom: 0.5rem;
+            color: #e0e0e0;
+        }
+
+        .line-explain {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            padding-left: 0.3rem;
+            color: #cfcfcf;
+        }
+        .line-explain strong { color: #ffb347; }
+        .line-explain code {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.88em;
+            color: #66d9ff;
+        }
+
+        /* ===== СХЕМА СВЯЗИ ===== */
+        .chain {
+            display: flex;
+            align-items: stretch;
+            gap: 0.8rem;
+            margin: 1.2rem 0;
+            flex-wrap: wrap;
+        }
+        .chain-item {
+            flex: 1 1 200px;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 12px;
+            padding: 1rem 1.1rem;
+            border-top: 3px solid;
+        }
+        .chain-item.html { border-color: #ff8a5c; }
+        .chain-item.css  { border-color: #66d9ff; }
+        .chain-item.js   { border-color: #ffe600; }
+        .chain-item h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+        .chain-item.html h4 { color: #ff8a5c; }
+        .chain-item.css  h4 { color: #66d9ff; }
+        .chain-item.js   h4 { color: #ffe600; }
+        .chain-item p {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            line-height: 1.55;
+        }
+        .chain-item code {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.05rem 0.3rem;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: #ffb347;
+        }
+
+        .summary-rule {
+            background: linear-gradient(135deg, rgba(162, 89, 255, 0.15), rgba(102, 217, 255, 0.1));
+            border: 1px solid rgba(162, 89, 255, 0.35);
+            border-radius: 14px;
+            padding: 1.2rem 1.4rem;
+            margin-top: 1.5rem;
+            font-size: 0.98rem;
+            line-height: 1.7;
+        }
+        .summary-rule strong { color: #a259ff; }
+
+        .c-tag  { color: #ff8a5c; }
+        .c-attr { color: #ffe600; }
+        .c-str  { color: #66d9ff; }
+        .c-prop { color: #66d9ff; }
+        .c-val  { color: #ffe600; }
+        .c-sel  { color: #d18aff; }
+        .c-com  { color: #6a737d; font-style: italic; }
+        .c-kw   { color: #ff6b9d; }
+        .c-fn   { color: #a259ff; }
+        .c-num  { color: #ffe600; }
+
+        .to-top {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        .to-top.visible { opacity: 1; pointer-events: auto; }
+        .to-top:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-3px); }
+
+        @media (max-width: 700px) {
+            body { padding: 1rem 0.8rem 6rem 0.8rem; }
+            .main-title { font-size: 1.7rem; }
+            .block { padding: 1.2rem 1rem; }
+            .block h2 { font-size: 1.05rem; }
+            .block h3 { font-size: 0.98rem; }
+            .line { grid-template-columns: 36px 1fr; gap: 0.5rem; }
+            .line-code { font-size: 0.72rem; padding: 0.5rem 0.6rem; }
+            .line-explain { font-size: 0.83rem; }
+            .top-nav { margin: -1rem -0.8rem 1.5rem -0.8rem; padding: 0.6rem 0.4rem; gap: 0.3rem; }
+            .top-nav a { font-size: 0.68rem; padding: 0.4rem 0.7rem; }
+            .chain-item { flex: 1 1 100%; }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="top-nav">
+        <a href="#start">Начало</a>
+        <a href="#head">HEAD</a>
+        <a href="#style-css">CSS внутри HEAD</a>
+        <a href="#nav">Меню</a>
+        <a href="#cards">Карточки</a>
+        <a href="#script">JS внизу</a>
+        <a href="#together">Связь всего</a>
+    </nav>
+
+    <main>
+        <h1 class="main-title">Полный разбор кода — построчно</h1>
+        <p class="lead">
+            Каждая строчка разобрана: что она делает, зачем нужна и как работает.
+            Разбор идёт сверху вниз — так же, как читает браузер.
+        </p>
+
+        <!-- ===== БЛОК 1 ===== -->
+        <section id="start" class="block">
+            <h2><span class="num num-html">001</span> Начало файла</h2>
+            <p>Первые строчки документа. Браузер читает их первыми и понимает, как обрабатывать страницу.</p>
+
+            <div class="line">
+                <div class="line-num">1</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;!DOCTYPE html&gt;</span></div>
+                    <div class="line-explain"><strong>Что:</strong> объявление типа документа. <strong>Зачем:</strong> без него браузер включит «quirks mode» — старый режим совместимости, где всё отображается непредсказуемо. Это не тег, а инструкция браузеру.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">2</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;html</span> <span class="c-attr">lang</span>=<span class="c-str">"ru"</span><span class="c-tag">&gt;</span></div>
+                    <div class="line-explain"><strong>Что:</strong> корневой элемент страницы. Внутри него лежит вообще всё. <strong>lang="ru"</strong> — говорит браузеру и поисковикам, что язык страницы русский (важно для озвучки и автоперевода).</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">3</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;head&gt;</span></div>
+                    <div class="line-explain"><strong>Что:</strong> открывается блок «мозг страницы». <strong>Зачем:</strong> внутри хранятся служебные настройки, которые пользователь не видит. Закрывается на строке 12.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== БЛОК 2 ===== -->
+        <section id="head" class="block">
+            <h2><span class="num num-html">002</span> Настройки внутри &lt;head&gt;</h2>
+            <p>Кодировка, мобильная адаптация, название вкладки, иконка, шрифты.</p>
+
+            <div class="line">
+                <div class="line-num">4</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;meta</span> <span class="c-attr">charset</span>=<span class="c-str">"UTF-8"</span><span class="c-tag">&gt;</span></div>
+                    <div class="line-explain"><strong>Что:</strong> кодировка текста. <strong>Зачем:</strong> без этой строки русские буквы превратятся в «крякозябры». UTF-8 — универсальная кодировка, которая понимает почти все языки мира.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">5</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;meta</span> <span class="c-attr">name</span>=<span class="c-str">"viewport"</span> <span class="c-attr">content</span>=<span class="c-str">"width=device-width, initial-scale=1.0"</span><span class="c-tag">&gt;</span></div>
+                    <div class="line-explain"><strong>Что:</strong> настройка адаптации под мобильные. <strong>width=device-width</strong> — ширина страницы равна ширине экрана устройства. <strong>initial-scale=1.0</strong> — масштаб 100% без начального увеличения. Без этой строки сайт на телефоне будет выглядеть как уменьшенная копия компьютерного.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">6</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;title&gt;</span>Полный разбор кода — построчно<span class="c-tag">&lt;/title&gt;</span></div>
+                    <div class="line-explain"><strong>Что:</strong> название страницы. <strong>Где видно:</strong> на вкладке браузера, в закладках, в результатах поиска. Именно этот текст показывается, когда пользователь открывает много вкладок.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">7</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;link</span> <span class="c-attr">rel</span>=<span class="c-str">"icon"</span> <span class="c-attr">href</span>=<span class="c-str">"icon.jpg"</span><span class="c-tag">&gt;</span></div>
+                    <div class="line-explain"><strong>Что:</strong> подключение иконки сайта (favicon). <strong>rel="icon"</strong> — тип связи «иконка». <strong>href</strong> — путь к файлу. Иконка показывается слева от названия на вкладке.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">8</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;link</span> <span class="c-attr">rel</span>=<span class="c-str">"preconnect"</span> <span class="c-attr">href</span>=<span class="c-str">"https://fonts.googleapis.com"</span><span class="c-tag">&gt;</span></div>
+                    <div class="line-explain"><strong>Что:</strong> «предподключение» к серверу Google Fonts. <strong>Зачем:</strong> браузер заранее установит соединение с сервером, пока грузит остальную страницу. Это ускоряет загрузку шрифтов.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">9</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;link</span> <span class="c-attr">href</span>=<span class="c-str">"https://fonts.googleapis.com/css2?...&amp;family=Montserrat..."</span> <span class="c-attr">rel</span>=<span class="c-str">"stylesheet"</span><span class="c-tag">&gt;</span></div>
+                    <div class="line-explain"><strong>Что:</strong> загрузка шрифта Montserrat с сервера Google. <strong>Зачем:</strong> чтобы страница на всех устройствах отображалась одним и тем же красивым шрифтом, а не системным по умолчанию.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">10</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;style&gt;</span> <span class="c-com">/* CSS идёт здесь */</span> <span class="c-tag">&lt;/style&gt;</span></div>
+                    <div class="line-explain"><strong>Что:</strong> открывается встроенный блок CSS. <strong>Зачем:</strong> всё оформление страницы описано прямо здесь, без отдельного файла. Так проще копировать один HTML и всё работает.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">11</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;/head&gt;</span></div>
+                    <div class="line-explain"><strong>Что:</strong> блок «мозг» закрыт. Всё, что после — будет видимым контентом.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== БЛОК 3 ===== -->
+        <section id="style-css" class="block">
+            <h2><span class="num num-css">003</span> CSS внутри &lt;style&gt;</h2>
+            <p>Разбор правил оформления. Каждое правило = селектор + фигурные скобки со свойствами.</p>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-sel">*</span> { <span class="c-prop">margin</span>: <span class="c-val">0</span>; <span class="c-prop">padding</span>: <span class="c-val">0</span>; <span class="c-prop">box-sizing</span>: <span class="c-val">border-box</span>; }</div>
+                    <div class="line-explain"><strong>Что:</strong> «обнуление» отступов у ВСЕХ элементов (звёздочка = все). <strong>box-sizing: border-box</strong> — ширина элемента считается вместе с рамкой и отступами. Без этого <code>width: 100px</code> + <code>padding: 20px</code> даст реально 140px ширины, что ломает расчёты.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-sel">html</span> { <span class="c-prop">scroll-behavior</span>: <span class="c-val">smooth</span>; }</div>
+                    <div class="line-explain"><strong>Что:</strong> плавная прокрутка. <strong>Зачем:</strong> когда пользователь кликает по якорной ссылке (например, <code>#head</code>), браузер плавно скроллит, а не «прыгает» мгновенно.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-sel">body</span> {
+  <span class="c-prop">background</span>: <span class="c-val">radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%)</span>;
+  <span class="c-prop">font-family</span>: <span class="c-val">'Montserrat', 'Segoe UI', sans-serif</span>;
+  <span class="c-prop">color</span>: <span class="c-val">#fff</span>;
+  <span class="c-prop">padding</span>: <span class="c-val">2rem 1.5rem 6rem 1.5rem</span>;
+}</div>
+                    <div class="line-explain"><strong>background:</strong> радиальный градиент — тёмно-синий (#1b2735) внизу переходит в почти чёрный (#090a0f). Создаёт «космический» эффект. <br><strong>font-family:</strong> сначала пробуем Montserrat, если нет — Segoe UI, если и его нет — любой системный без засечек. <br><strong>color:</strong> белый текст по умолчанию. <br><strong>padding:</strong> отступы — верх 2rem, право 1.5rem, низ 6rem (с запасом под кнопку «наверх»), лево 1.5rem. <strong>1rem = 16px</strong> по умолчанию.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-sel">main</span> { <span class="c-prop">max-width</span>: <span class="c-val">1100px</span>; <span class="c-prop">margin</span>: <span class="c-val">0 auto</span>; }</div>
+                    <div class="line-explain"><strong>max-width:</strong> контент не растянется шире 1100px. <strong>margin: 0 auto</strong> — верх/низ без отступов, лево/право «auto» — блок автоматически центрируется по горизонтали.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-sel">.line</span> { <span class="c-prop">display</span>: <span class="c-val">grid</span>; <span class="c-prop">grid-template-columns</span>: <span class="c-val">50px 1fr</span>; <span class="c-prop">gap</span>: <span class="c-val">1rem</span>; }</div>
+                    <div class="line-explain"><strong>display: grid</strong> — включаем сетку. <strong>grid-template-columns: 50px 1fr</strong> — две колонки: первая ровно 50px (для номера строки), вторая занимает всё оставшееся место (1fr = одна фракция). <strong>gap</strong> — отступ между колонками.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-sel">.line-code</span> { <span class="c-prop">white-space</span>: <span class="c-val">pre</span>; <span class="c-prop">overflow-x</span>: <span class="c-val">auto</span>; }</div>
+                    <div class="line-explain"><strong>white-space: pre</strong> — сохраняет пробелы и переносы строк как в исходнике. Без этого код «схлопнется» в одну строку. <strong>overflow-x: auto</strong> — если код не влезает, появится горизонтальный скролл.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-sel">.to-top</span> { <span class="c-prop">opacity</span>: <span class="c-val">0</span>; <span class="c-prop">pointer-events</span>: <span class="c-val">none</span>; }
+<span class="c-sel">.to-top.visible</span> { <span class="c-prop">opacity</span>: <span class="c-val">1</span>; <span class="c-prop">pointer-events</span>: <span class="c-val">auto</span>; }</div>
+                    <div class="line-explain"><strong>По умолчанию кнопка скрыта:</strong> opacity 0 (невидима) и pointer-events none (клики по ней не срабатывают). <strong>Когда есть класс .visible</strong> (его добавляет JS) — кнопка появляется (opacity 1) и начинает ловить клики (pointer-events auto). <code>.to-top.visible</code> — значит «элемент с классом to-top И классом visible одновременно».</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-kw">@media</span> (<span class="c-prop">max-width</span>: <span class="c-val">700px</span>) { ... }</div>
+                    <div class="line-explain"><strong>Что:</strong> медиазапрос. Внутри этого блока — правила, которые работают, только если ширина окна 700px или меньше (телефоны). Всё, что здесь — уменьшенные размеры: шрифты, отступы, размеры блоков.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== БЛОК 4 ===== -->
+        <section id="nav" class="block">
+            <h2><span class="num num-html">004</span> Меню навигации в &lt;body&gt;</h2>
+            <p>Липкое меню, которое остаётся на месте при прокрутке.</p>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;nav</span> <span class="c-attr">class</span>=<span class="c-str">"top-nav"</span><span class="c-tag">&gt;</span></div>
+                    <div class="line-explain"><strong>&lt;nav&gt;</strong> — семантический тег для навигации. Поисковики и скринридеры понимают: здесь меню. <strong>class="top-nav"</strong> — имя для CSS, чтобы оформить именно это меню.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;a</span> <span class="c-attr">href</span>=<span class="c-str">"#start"</span><span class="c-tag">&gt;</span>Начало<span class="c-tag">&lt;/a&gt;</span></div>
+                    <div class="line-explain"><strong>&lt;a&gt;</strong> — ссылка. <strong>href="#start"</strong> — якорная ссылка: браузер найдёт на странице элемент с <code>id="start"</code> и плавно прокрутит к нему (благодаря <code>scroll-behavior: smooth</code>). Текст «Начало» — то, что видит пользователь.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-sel">.top-nav</span> { <span class="c-prop">position</span>: <span class="c-val">sticky</span>; <span class="c-prop">top</span>: <span class="c-val">0</span>; <span class="c-prop">z-index</span>: <span class="c-val">20</span>; }</div>
+                    <div class="line-explain"><strong>position: sticky</strong> — элемент ведёт себя как обычный, но при скролле «прилипает» к верху. <strong>top: 0</strong> — прилипает именно к верхнему краю. <strong>z-index: 20</strong> — номер слоя: чем больше, тем выше элемент. Меню будет поверх контента.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== БЛОК 5 ===== -->
+        <section id="cards" class="block">
+            <h2><span class="num num-html">005</span> Карточка разбора</h2>
+            <p>Основной блок, внутри которого код и его объяснение.</p>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;section</span> <span class="c-attr">id</span>=<span class="c-str">"start"</span> <span class="c-attr">class</span>=<span class="c-str">"block"</span><span class="c-tag">&gt;</span></div>
+                    <div class="line-explain"><strong>&lt;section&gt;</strong> — смысловой раздел страницы. <strong>id="start"</strong> — уникальный якорь для ссылки из меню. <strong>class="block"</strong> — общий класс для оформления (рамка, отступы, фон).</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;h2&gt;&lt;span</span> <span class="c-attr">class</span>=<span class="c-str">"num num-html"</span><span class="c-tag">&gt;</span>001<span class="c-tag">&lt;/span&gt;</span> Начало файла<span class="c-tag">&lt;/h2&gt;</span></div>
+                    <div class="line-explain"><strong>&lt;h2&gt;</strong> — заголовок второго уровня. Внутри <strong>&lt;span&gt;</strong> — маленький строчный контейнер, чтобы выделить только номер «001» цветной плашкой. Остальной текст остаётся белым.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-str">"line"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-str">"line-num"</span><span class="c-tag">&gt;</span>1<span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class</span>=<span class="c-str">"line-content"</span><span class="c-tag">&gt;</span>...<span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/div&gt;</span></div>
+                    <div class="line-explain"><strong>Внешний .line</strong> — сетка из двух колонок (номер + содержимое). <strong>.line-num</strong> — колонка с номером строки кода. <strong>.line-content</strong> — сюда идёт сам код и пояснение. Всё вместе даёт аккуратную таблицу «номер | код | пояснение».</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;pre&gt;&lt;code&gt;</span>...<span class="c-tag">&lt;/code&gt;&lt;/pre&gt;</span></div>
+                    <div class="line-explain"><strong>&lt;pre&gt;</strong> — сохраняет все пробелы и переносы строк из исходника (иначе код схлопнется в одну строку). <strong>&lt;code&gt;</strong> — семантически говорит «это код». Внутри используются <code>&amp;lt;</code> и <code>&amp;gt;</code>, чтобы показать теги как текст.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== БЛОК 6 ===== -->
+        <section id="script" class="block">
+            <h2><span class="num num-js">006</span> JavaScript внизу страницы</h2>
+            <p>Скрипт лежит в самом конце, перед <code>&lt;/body&gt;</code>. Разбираем каждую строчку.</p>
+
+            <div class="line">
+                <div class="line-num">—</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;script&gt;</span></div>
+                    <div class="line-explain"><strong>Зачем внизу:</strong> к моменту чтения скрипта весь HTML уже загружен. Если бы скрипт был вверху, он искал бы элементы, которых ещё нет.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">1</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-kw">const</span> toTop = document.<span class="c-fn">getElementById</span>(<span class="c-str">'toTop'</span>);</div>
+                    <div class="line-explain"><strong>const toTop</strong> — создаём переменную, которую нельзя переприсвоить. <strong>document.getElementById('toTop')</strong> — ищем на странице элемент с <code>id="toTop"</code> и сохраняем ссылку в переменную. Теперь через <code>toTop</code> можем управлять этой кнопкой.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">2</div>
+                <div class="line-content">
+                    <div class="line-code">window.<span class="c-fn">addEventListener</span>(<span class="c-str">'scroll'</span>, () =&gt; {</div>
+                    <div class="line-explain"><strong>window</strong> — всё окно браузера. <strong>addEventListener('scroll', ...)</strong> — «слушай событие прокрутки». Второй аргумент — функция, которая выполняется КАЖДЫЙ раз, когда пользователь прокручивает страницу.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">3</div>
+                <div class="line-content">
+                    <div class="line-code">  <span class="c-kw">if</span> (window.scrollY &gt; 300) {</div>
+                    <div class="line-explain"><strong>window.scrollY</strong> — сколько пикселей пользователь прокрутил вниз от самого верха. <strong>&gt; 300</strong> — проверяем, больше ли 300. Если да — выполняется следующая строка.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">4</div>
+                <div class="line-content">
+                    <div class="line-code">    toTop.classList.<span class="c-fn">add</span>(<span class="c-str">'visible'</span>);</div>
+                    <div class="line-explain"><strong>classList</strong> — список классов элемента. <strong>.add('visible')</strong> — добавляет класс <code>visible</code>. В CSS прописано, что при наличии этого класса кнопка становится видимой (opacity: 1).</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">5</div>
+                <div class="line-content">
+                    <div class="line-code">  } <span class="c-kw">else</span> {</div>
+                    <div class="line-explain"><strong>else</strong> — «иначе». Если пользователь прокрутил МЕНЬШЕ 300 пикселей — выполняется блок ниже.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">6</div>
+                <div class="line-content">
+                    <div class="line-code">    toTop.classList.<span class="c-fn">remove</span>(<span class="c-str">'visible'</span>);</div>
+                    <div class="line-explain"><strong>.remove('visible')</strong> — убирает класс <code>visible</code>. Кнопка снова прячется (opacity: 0).</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">7</div>
+                <div class="line-content">
+                    <div class="line-code">  }
+});</div>
+                    <div class="line-explain">Закрываем блок <code>if/else</code> и функцию-обработчик скролла.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">8</div>
+                <div class="line-content">
+                    <div class="line-code">toTop.<span class="c-fn">addEventListener</span>(<span class="c-str">'click'</span>, () =&gt; {</div>
+                    <div class="line-explain">Вешаем «слушателя» на клик по кнопке. Функция выполнится, когда пользователь нажмёт на кнопку «↑».</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">9</div>
+                <div class="line-content">
+                    <div class="line-code">  window.<span class="c-fn">scrollTo</span>({ top: <span class="c-num">0</span>, behavior: <span class="c-str">'smooth'</span> });</div>
+                    <div class="line-explain"><strong>window.scrollTo</strong> — прокрутка окна. <strong>top: 0</strong> — прокрутить к самому верху. <strong>behavior: 'smooth'</strong> — плавно, а не мгновенно.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">10</div>
+                <div class="line-content">
+                    <div class="line-code">});</div>
+                    <div class="line-explain">Закрываем обработчик клика.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">11</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-kw">const</span> observer = <span class="c-kw">new</span> <span class="c-fn">IntersectionObserver</span>((entries) =&gt; {</div>
+                    <div class="line-explain"><strong>IntersectionObserver</strong> — встроенный «наблюдатель» браузера. Он следит, когда элемент появляется в зоне видимости. <strong>(entries) =&gt; {...}</strong> — стрелочная функция, которая вызывается при каждом изменении. <strong>entries</strong> — массив наблюдаемых элементов с их состоянием.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">12</div>
+                <div class="line-content">
+                    <div class="line-code">  entries.<span class="c-fn">forEach</span>(entry =&gt; {</div>
+                    <div class="line-explain"><strong>forEach</strong> — пробегаем по каждому элементу из массива <code>entries</code>. <strong>entry</strong> — текущий элемент с информацией о нём.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">13</div>
+                <div class="line-content">
+                    <div class="line-code">    <span class="c-kw">if</span> (entry.isIntersecting) {</div>
+                    <div class="line-explain"><strong>entry.isIntersecting</strong> — свойство, которое <code>true</code>, если элемент сейчас находится в видимой области окна. Если да — заходим внутрь.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">14</div>
+                <div class="line-content">
+                    <div class="line-code">      entry.target.style.animationPlayState = <span class="c-str">'running'</span>;</div>
+                    <div class="line-explain"><strong>entry.target</strong> — сам элемент, за которым следим. <strong>.style</strong> — его встроенные стили. <strong>animationPlayState = 'running'</strong> — запускает CSS-анимацию. До этого она была на паузе, и блок был невидим.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">15</div>
+                <div class="line-content">
+                    <div class="line-code">    }
+  });
+}, { threshold: <span class="c-num">0.1</span> });</div>
+                    <div class="line-explain"><strong>threshold: 0.1</strong> — настройка наблюдателя: срабатывать, когда видно хотя бы 10% элемента. Если поставить <code>1</code> — ждал бы, пока элемент видно целиком.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">16</div>
+                <div class="line-content">
+                    <div class="line-code">document.<span class="c-fn">querySelectorAll</span>(<span class="c-str">'.fade-in'</span>)</div>
+                    <div class="line-explain"><strong>querySelectorAll</strong> — находит ВСЕ элементы с классом <code>.fade-in</code> на странице. Возвращает список (похож на массив).</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">17</div>
+                <div class="line-content">
+                    <div class="line-code">        .<span class="c-fn">forEach</span>(el =&gt; observer.<span class="c-fn">observe</span>(el));</div>
+                    <div class="line-explain"><strong>forEach</strong> — проходим по всем найденным элементам. <strong>observer.observe(el)</strong> — подписываем каждый элемент на наблюдение. Теперь как только любой из них появится в зоне видимости — сработает наш обработчик.</div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">18</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-tag">&lt;/script&gt;</span></div>
+                    <div class="line-explain">Закрываем блок скрипта. Дальше — <code>&lt;/body&gt;</code> и <code>&lt;/html&gt;</code>.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             БЛОК 7: ИСПРАВЛЕННЫЙ — СВЯЗЬ ВСЕГО
+             ========================================================= -->
+        <section id="together" class="block">
+            <h2><span class="num num-html">007</span> Как HTML, CSS и JS связаны между собой</h2>
+            <p>
+                Теперь, когда мы разобрали каждый блок по отдельности, посмотрим, как три технологии
+                соединяются в одно целое. Разберём три реальных примера с этой страницы.
+            </p>
+
+            <!-- ===== ПРИМЕР 1 ===== -->
+            <h3>Пример 1. Кнопка «Наверх» — связка HTML + CSS + JS</h3>
+            <p style="opacity:0.8; font-size:0.92rem; margin-bottom:0.8rem;">
+                Самый наглядный пример. Здесь участвуют все три технологии: HTML создаёт кнопку,
+                CSS прячет её и задаёт стиль, а JS показывает, когда нужно.
+            </p>
+
+            <div class="chain">
+                <div class="chain-item html">
+                    <h4>HTML — создаёт</h4>
+                    <p>Кнопка с двумя именами: <code>class</code> для CSS и <code>id</code> для JS.</p>
+                </div>
+                <div class="chain-item css">
+                    <h4>CSS — прячет</h4>
+                    <p>По умолчанию кнопка невидима. Появляется только при классе <code>.visible</code>.</p>
+                </div>
+                <div class="chain-item js">
+                    <h4>JS — управляет</h4>
+                    <p>Следит за скроллом и переключает класс <code>.visible</code>.</p>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">1</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-com">&lt;!-- HTML: создаём кнопку --&gt;</span>
+<span class="c-tag">&lt;button</span> <span class="c-attr">class</span>=<span class="c-str">"to-top"</span> <span class="c-attr">id</span>=<span class="c-str">"toTop"</span> <span class="c-attr">aria-label</span>=<span class="c-str">"Наверх"</span><span class="c-tag">&gt;</span>↑<span class="c-tag">&lt;/button&gt;</span></div>
+                    <div class="line-explain">
+                        <strong>class="to-top"</strong> — «имя» для CSS. По нему стили узнают, что это кнопка «наверх», и применят к ней свои правила. <br>
+                        <strong>id="toTop"</strong> — «имя» для JS. Уникальное, встречается только один раз. По нему скрипт найдёт именно эту кнопку. <br>
+                        <strong>aria-label="Наверх"</strong> — текст для скринридеров (невидимая подпись). Нужно для людей с ограниченными возможностями.
+                    </div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">2</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-com">/* CSS: по умолчанию прячем кнопку */</span>
+<span class="c-sel">.to-top</span> {
+  <span class="c-prop">position</span>: <span class="c-val">fixed</span>;        <span class="c-com">/* фиксируем в углу окна */</span>
+  <span class="c-prop">bottom</span>: <span class="c-val">30px</span>;         <span class="c-com">/* отступ снизу */</span>
+  <span class="c-prop">left</span>: <span class="c-val">30px</span>;           <span class="c-com">/* отступ слева */</span>
+  <span class="c-prop">opacity</span>: <span class="c-val">0</span>;            <span class="c-com">/* невидима */</span>
+  <span class="c-prop">pointer-events</span>: <span class="c-val">none</span>; <span class="c-com">/* не реагирует на клики */</span>
+}</div>
+                    <div class="line-explain">
+                        <strong>position: fixed</strong> — кнопка «приклеена» к экрану, не движется при прокрутке. <br>
+                        <strong>opacity: 0</strong> — полностью прозрачная, пользователь её не видит. <br>
+                        <strong>pointer-events: none</strong> — отключает реакцию на мышь. Даже если случайно кликнуть в этом месте — ничего не сработает. Это важно, потому что невидимая кнопка не должна мешать.
+                    </div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">3</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-com">/* CSS: когда есть класс .visible — показываем */</span>
+<span class="c-sel">.to-top.visible</span> {
+  <span class="c-prop">opacity</span>: <span class="c-val">1</span>;            <span class="c-com">/* теперь видна */</span>
+  <span class="c-prop">pointer-events</span>: <span class="c-val">auto</span>; <span class="c-com">/* снова реагирует на клики */</span>
+}</div>
+                    <div class="line-explain">
+                        <strong>.to-top.visible</strong> — правило сработает, только если у элемента ОДНОВРЕМЕННО есть оба класса: <code>to-top</code> и <code>visible</code>. <br>
+                        Класс <code>visible</code> изначально не задан в HTML. Его добавит JavaScript, когда пользователь прокрутит страницу вниз. Тогда кнопка «проявится».
+                    </div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">4</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-com">// JS: находим кнопку по id</span>
+<span class="c-kw">const</span> toTop = document.<span class="c-fn">getElementById</span>(<span class="c-str">'toTop'</span>);
+
+<span class="c-com">// JS: следим за прокруткой</span>
+window.<span class="c-fn">addEventListener</span>(<span class="c-str">'scroll'</span>, () =&gt; {
+  <span class="c-kw">if</span> (window.scrollY &gt; <span class="c-num">300</span>) {
+    toTop.classList.<span class="c-fn">add</span>(<span class="c-str">'visible'</span>);      <span class="c-com">// ← показываем</span>
+  } <span class="c-kw">else</span> {
+    toTop.classList.<span class="c-fn">remove</span>(<span class="c-str">'visible'</span>);   <span class="c-com">// ← прячем</span>
+  }
+});</div>
+                    <div class="line-explain">
+                        <strong>getElementById('toTop')</strong> — JS ищет кнопку по <code>id</code> и запоминает ссылку. <br>
+                        <strong>classList.add('visible')</strong> — добавляет класс <code>visible</code>. CSS тут же «видит» изменение и показывает кнопку. <br>
+                        <strong>classList.remove('visible')</strong> — убирает класс. Кнопка снова прячется. <br>
+                        <strong>Что произошло:</strong> JS не меняет цвет кнопки напрямую — он просто переключает класс. Всё оформление остаётся в CSS. Так код чище и логичнее.
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== ПРИМЕР 2 ===== -->
+            <h3>Пример 2. Анимация появления блоков — связка CSS + JS</h3>
+            <p style="opacity:0.8; font-size:0.92rem; margin-bottom:0.8rem;">
+                Здесь HTML вообще не участвует: у нас уже есть блоки с классом <code>.fade-in</code>.
+                CSS описывает анимацию, но ставит её на паузу. JS запускает её, когда блок появляется в зоне видимости.
+            </p>
+
+            <div class="line">
+                <div class="line-num">1</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-com">/* CSS: описываем анимацию и ставим на паузу */</span>
+<span class="c-sel">.fade-in</span> {
+  <span class="c-prop">opacity</span>: <span class="c-val">0</span>;                          <span class="c-com">/* невидим */</span>
+  <span class="c-prop">transform</span>: <span class="c-val">translateY(20px)</span>;        <span class="c-com">/* сдвинут вниз */</span>
+  <span class="c-prop">animation</span>: <span class="c-val">fadeInUp 0.8s ease forwards</span>;
+  <span class="c-prop">animation-play-state</span>: <span class="c-val">paused</span>;  <span class="c-com">/* ← анимация НА ПАУЗЕ */</span>
+}
+
+<span class="c-kw">@keyframes</span> <span class="c-fn">fadeInUp</span> {
+  <span class="c-kw">to</span> {
+    <span class="c-prop">opacity</span>: <span class="c-val">1</span>;                          <span class="c-com">/* станет видимым */</span>
+    <span class="c-prop">transform</span>: <span class="c-val">translateY(0)</span>;          <span class="c-com">/* вернётся на место */</span>
+  }
+}</div>
+                    <div class="line-explain">
+                        <strong>animation</strong> — задаёт анимацию: имя <code>fadeInUp</code>, длительность 0.8s, плавность ease, удержать финал (<code>forwards</code>). <br>
+                        <strong>animation-play-state: paused</strong> — ключевая строка. Анимация создана, но стоит на паузе. Блок выглядит как <code>opacity: 0</code> — невидим. <br>
+                        <strong>@keyframes fadeInUp</strong> — описывает, к чему анимация должна привести: сделать видимым и вернуть на место.
+                    </div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">2</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-com">// JS: запускаем анимацию, когда блок попал в поле зрения</span>
+<span class="c-kw">const</span> observer = <span class="c-kw">new</span> <span class="c-fn">IntersectionObserver</span>((entries) =&gt; {
+  entries.<span class="c-fn">forEach</span>(entry =&gt; {
+    <span class="c-kw">if</span> (entry.isIntersecting) {
+      entry.target.style.animationPlayState = <span class="c-str">'running'</span>;  <span class="c-com">// ← снимаем с паузы</span>
+    }
+  });
+});
+
+document.<span class="c-fn">querySelectorAll</span>(<span class="c-str">'.fade-in'</span>).<span class="c-fn">forEach</span>(el =&gt; observer.<span class="c-fn">observe</span>(el));</div>
+                    <div class="line-explain">
+                        <strong>IntersectionObserver</strong> — «наблюдатель», который сам сообщает браузеру, когда элемент попал в зону видимости. <br>
+                        <strong>animationPlayState = 'running'</strong> — эта строчка снимает анимацию с паузы. Как только это произошло — CSS-анимация плавно проявляет блок. <br>
+                        <strong>querySelectorAll('.fade-in')</strong> — находит все блоки, которые должны появляться с анимацией, и подписывает каждый на наблюдение. <br>
+                        <strong>Что произошло:</strong> CSS нарисовал анимацию, но остановил. JS в нужный момент даёт команду «поехали».
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== ПРИМЕР 3 ===== -->
+            <h3>Пример 3. Меню с якорями — связка HTML + CSS (без JS)</h3>
+            <p style="opacity:0.8; font-size:0.92rem; margin-bottom:0.8rem;">
+                Не всё требует JavaScript. Вот пример, где HTML и CSS справляются сами.
+            </p>
+
+            <div class="line">
+                <div class="line-num">1</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-com">&lt;!-- HTML: ссылка с якорем --&gt;</span>
+<span class="c-tag">&lt;a</span> <span class="c-attr">href</span>=<span class="c-str">"#head"</span><span class="c-tag">&gt;</span>HEAD<span class="c-tag">&lt;/a&gt;</span>
+
+<span class="c-com">&lt;!-- HTML: секция с id, на которую ведёт ссылка --&gt;</span>
+<span class="c-tag">&lt;section</span> <span class="c-attr">id</span>=<span class="c-str">"head"</span><span class="c-tag">&gt;</span>...<span class="c-tag">&lt;/section&gt;</span></div>
+                    <div class="line-explain">
+                        <strong>href="#head"</strong> — «прокрутить к элементу с <code>id="head"</code>». <br>
+                        <strong>id="head"</strong> — якорь, к которому ведёт ссылка. Браузер сам находит нужное место.
+                    </div>
+                </div>
+            </div>
+
+            <div class="line">
+                <div class="line-num">2</div>
+                <div class="line-content">
+                    <div class="line-code"><span class="c-com">/* CSS: делаем прокрутку плавной */</span>
+<span class="c-sel">html</span> {
+  <span class="c-prop">scroll-behavior</span>: <span class="c-val">smooth</span>;
+}</div>
+                    <div class="line-explain">
+                        <strong>scroll-behavior: smooth</strong> — одна строчка, которая делает прокрутку плавной. Без неё браузер «прыгал» бы мгновенно к якорю. <br>
+                        <strong>Что произошло:</strong> HTML связал клик и место, CSS добавил плавность. JavaScript не нужен вообще.
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== ИТОГ ===== -->
+            <div class="summary-rule">
+                <strong>Главное правило:</strong> HTML, CSS и JS — это три разных языка, которые решают разные задачи. HTML создаёт элементы. CSS описывает, как они выглядят. JS управляет ими во времени.<br><br>
+                Связываются они через два «моста»: <strong>class</strong> — для CSS, <strong>id</strong> — для JS. Поэтому в HTML-элементах всегда пишут и то, и другое, если хотят, чтобы элемент и выглядел красиво, и реагировал на действия.
+            </div>
+        </section>
+
+    </main>
+
+    <button class="to-top" id="toTop" aria-label="Наверх">↑</button>
+
+    <script>
+        const toTop = document.getElementById('toTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                toTop.classList.add('visible');
+            } else {
+                toTop.classList.remove('visible');
+            }
+        });
+        toTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

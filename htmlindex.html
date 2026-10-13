@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML — Три кита фронтенда</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="3c1541303103a4f900685fa3653e3912.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== Базовые стили ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body { width: 100%; min-height: 100vh; }
+
+        body {
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            font-family: 'Montserrat', 'Segoe UI', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            padding: 3rem 4rem 6rem 4rem;
+            text-align: left;
+        }
+
+        main { max-width: 1000px; margin: 0 auto; }
+
+        article h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, #ff8a00, #ffe600, #00c6ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: left;
+        }
+
+        article h2 {
+            font-size: 1.6rem;
+            margin: 2rem 0 1rem;
+            color: #ffb347;
+            text-align: left;
+        }
+
+        article p {
+            width: 100%;
+            font-size: 1rem;
+            line-height: 1.7;
+            opacity: 0.88;
+            margin-bottom: 1.2rem;
+            text-align: justify;
+            overflow-wrap: break-word;
+        }
+
+        article p strong { color: #ffb347; }
+
+        code {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.15rem 0.4rem;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95em;
+            color: #d18aff;
+        }
+
+        .tag-html { color: #ff8a5c; }
+        .tag-css  { color: #66d9ff; }
+        .tag-js   { color: #ffe600; }
+
+        /* ============================================================
+           ТАБЛИЦА
+           ============================================================ */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 0.9rem 1.1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            vertical-align: top;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.06);
+            font-weight: 600;
+            color: #ffb347;
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        tbody tr { transition: background 0.25s ease; }
+        tbody tr:hover { background: rgba(255, 138, 0, 0.07); }
+
+        td:first-child {
+            font-weight: 600;
+            white-space: nowrap;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #ffb347;
+        }
+
+        /* ============================================================
+           КНОПКИ
+           ============================================================ */
+        .back {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.7rem 1.6rem;
+            border-radius: 30px;
+            background: rgba(255, 138, 0, 0.15);
+            border: 1px solid #ff8a00;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .back:hover {
+            background: #ff8a00;
+            color: #090a0f;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 138, 0, 0.4);
+        }
+
+        .to-top {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .to-top.visible { opacity: 1; pointer-events: auto; }
+        .to-top:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-3px); }
+
+        /* ============================================================
+           ПЛАВНОЕ ПОЯВЛЕНИЕ
+           ============================================================ */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================================
+           АДАПТАЦИЯ
+           ============================================================ */
+        @media (max-width: 900px) {
+            body { padding: 2rem 1.5rem 6rem 1.5rem; }
+            article h1 { font-size: 2rem; }
+            article h2 { font-size: 1.35rem; }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 1.5rem 1rem 6rem 1rem; }
+            article h1 { font-size: 1.6rem; }
+            article h2 { font-size: 1.2rem; }
+            article p { font-size: 0.95rem; }
+            th, td { padding: 0.7rem 0.8rem; font-size: 0.85rem; }
+            .back { bottom: 20px; right: 20px; padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+            .to-top { bottom: 20px; left: 20px; width: 42px; height: 42px; }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <article>
+            <h1 class="fade-in" style="animation-delay: 0.05s;">HTML</h1>
+
+            <p class="fade-in" style="animation-delay: 0.1s;">
+                <strong>HTML (HyperText Markup Language)</strong> — это язык гипертекстовой разметки,
+                который служит фундаментом для создания веб-страниц. Он задаёт их структуру, определяя,
+                где будут заголовки, абзацы, изображения, ссылки и другие элементы. Без HTML браузер
+                не смог бы отобразить содержимое сайта.
+            </p>
+
+            <p class="fade-in" style="animation-delay: 0.2s;"><strong>История создания</strong></p>
+
+            <p class="fade-in" style="animation-delay: 0.3s;">
+                HTML разработал британский учёный Тим Бернерс-Ли примерно в 1986–1991 годах
+                в Европейском центре ядерных исследований (CERN) в Женеве. Изначально язык создавался
+                как средство для обмена научной и технической документацией, удобное для людей,
+                не являющихся специалистами в вёрстке. Первая версия включала всего 18 тегов
+                и была упрощённой версией более сложного языка SGML.
+            </p>
+
+            <p class="fade-in" style="animation-delay: 0.4s;"><strong>Ключевые особенности</strong></p>
+
+            <p class="fade-in" style="animation-delay: 0.5s;">
+                <strong>Не является языком программирования.</strong> HTML только структурирует контент
+                и определяет его смысл, но не содержит логических операторов, циклов или переменных.
+                Всё, что связано с интерактивностью и динамикой (анимация, валидация форм, сложные
+                вычисления), требует интеграции с другими технологиями, например, JavaScript.
+            </p>
+
+            <p class="fade-in" style="animation-delay: 0.6s;">
+                <strong>Основа для других технологий.</strong> HTML задаёт структуру страницы, CSS отвечает
+                за её визуальное оформление (цвета, шрифты, расположение), а JavaScript добавляет
+                интерактивность.
+            </p>
+
+            <p class="fade-in" style="animation-delay: 0.7s;">
+                <strong>Семантическая разметка.</strong> Современные версии HTML (начиная с HTML5) включают
+                теги, которые чётко описывают назначение контента: <code>&lt;header&gt;</code>,
+                <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;footer&gt;</code>,
+                <code>&lt;nav&gt;</code>. Это улучшает доступность для людей с ограниченными возможностями
+                и помогает поисковым системам лучше понимать страницу.
+            </p>
+
+            <p class="fade-in" style="animation-delay: 0.8s;"><strong>Как устроен HTML</strong></p>
+
+            <p class="fade-in" style="animation-delay: 0.9s;">
+                <strong>Теги</strong> — это основные строительные блоки HTML. Они выглядят как
+                <code>&lt;имя&gt;</code> и указывают браузеру, как отображать содержимое. Большинство
+                тегов парные (открывающий и закрывающий), но есть и одиночные (самозакрывающиеся),
+                например, <code>&lt;br&gt;</code> или <code>&lt;img&gt;</code>.
+            </p>
+
+            <h2 class="fade-in" style="animation-delay: 1s;">Основные теги HTML</h2>
+
+            <p class="fade-in" style="animation-delay: 1.05s;">
+                Ниже собраны теги, с которых начинается любая вёрстка: от структуры документа
+                до таблиц, форм и мультимедиа.
+            </p>
+
+            <div class="table-wrap fade-in" style="animation-delay: 1.1s;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Тег</th>
+                            <th scope="col">Назначение</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>&lt;!DOCTYPE html&gt;</td><td>Указывает браузеру, что документ написан на HTML5</td></tr>
+                        <tr><td>&lt;html&gt;</td><td>Корневой элемент страницы, внутри него лежит весь документ</td></tr>
+                        <tr><td>&lt;head&gt;</td><td>Служебный блок: заголовок вкладки, кодировка, подключение стилей и шрифтов</td></tr>
+                        <tr><td>&lt;body&gt;</td><td>Видимая часть страницы — всё, что показывает браузер</td></tr>
+                        <tr><td>&lt;title&gt;</td><td>Название страницы на вкладке браузера</td></tr>
+                        <tr><td>&lt;meta&gt;</td><td>Служебная информация: кодировка, адаптация под мобильные, описание</td></tr>
+                        <tr><td>&lt;link&gt;</td><td>Подключение внешних файлов: CSS, иконка, шрифты</td></tr>
+                        <tr><td>&lt;script&gt;</td><td>Подключение или встраивание JavaScript-кода</td></tr>
+                        <tr><td>&lt;h1&gt;…&lt;h6&gt;</td><td>Заголовки шести уровней: h1 — главный, h6 — самый мелкий</td></tr>
+                        <tr><td>&lt;p&gt;</td><td>Абзац текста</td></tr>
+                        <tr><td>&lt;br&gt;</td><td>Перенос строки (одиночный тег)</td></tr>
+                        <tr><td>&lt;hr&gt;</td><td>Горизонтальная линия-разделитель</td></tr>
+                        <tr><td>&lt;strong&gt;</td><td>Важный текст — браузер делает его жирным</td></tr>
+                        <tr><td>&lt;em&gt;</td><td>Акцент на слове — курсив</td></tr>
+                        <tr><td>&lt;a&gt;</td><td>Ссылка на другую страницу, файл или якорь</td></tr>
+                        <tr><td>&lt;img&gt;</td><td>Картинка (одиночный тег, обязателен атрибут src)</td></tr>
+                        <tr><td>&lt;ul&gt; / &lt;ol&gt;</td><td>Маркированный / нумерованный список</td></tr>
+                        <tr><td>&lt;li&gt;</td><td>Элемент списка внутри ul или ol</td></tr>
+                        <tr><td>&lt;div&gt;</td><td>Универсальный блок-контейнер без смысла</td></tr>
+                        <tr><td>&lt;span&gt;</td><td>Универсальный строчный контейнер для части текста</td></tr>
+                        <tr><td>&lt;header&gt;</td><td>Шапка страницы или блока</td></tr>
+                        <tr><td>&lt;nav&gt;</td><td>Блок навигации — меню, ссылки</td></tr>
+                        <tr><td>&lt;main&gt;</td><td>Основное содержимое страницы</td></tr>
+                        <tr><td>&lt;article&gt;</td><td>Отдельная статья или запись</td></tr>
+                        <tr><td>&lt;section&gt;</td><td>Смысловой раздел внутри статьи</td></tr>
+                        <tr><td>&lt;footer&gt;</td><td>Подвал страницы: контакты, копирайт</td></tr>
+                        <tr><td>&lt;button&gt;</td><td>Кнопка, на которую можно нажать</td></tr>
+                        <tr><td>&lt;form&gt;</td><td>Форма для ввода данных</td></tr>
+                        <tr><td>&lt;input&gt;</td><td>Поле ввода: текст, пароль, галочка, кнопка</td></tr>
+                        <tr><td>&lt;table&gt;</td><td>Таблица</td></tr>
+                        <tr><td>&lt;tr&gt; / &lt;td&gt; / &lt;th&gt;</td><td>Строка / ячейка / ячейка-заголовок таблицы</td></tr>
+                        <tr><td>&lt;video&gt; / &lt;audio&gt;</td><td>Видео и аудио на странице</td></tr>
+                        <tr><td>&lt;iframe&gt;</td><td>Встроенный фрейм — например, карта или видео с YouTube</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    </main>
+
+    <a href="index.html" class="back" aria-label="Вернуться на главную">← Назад</a>
+    <button class="to-top" id="toTop" aria-label="Наверх">↑</button>
+
+    <script>
+        // ===== Кнопка «Наверх» =====
+        const toTop = document.getElementById('toTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                toTop.classList.add('visible');
+            } else {
+                toTop.classList.remove('visible');
+            }
+        });
+
+        toTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ===== Плавное появление блоков при скролле =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

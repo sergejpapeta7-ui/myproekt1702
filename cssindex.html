@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS — Три кита фронтенда</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="3c1541303103a4f900685fa3653e3912.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== Базовые стили ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        body {
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            font-family: 'Montserrat', 'Segoe UI', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            padding: 2rem 1.5rem 6rem 1.5rem;
+            text-align: left;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Абзацы — на всю ширину, выравнивание по ширине */
+        article p {
+            width: 100%;
+            font-size: 1rem;
+            line-height: 1.7;
+            opacity: 0.88;
+            margin-bottom: 1.2rem;
+            text-align: justify;
+            overflow-wrap: break-word;
+        }
+
+        article p strong {
+            color: #ffb347;
+        }
+
+        article h2 {
+            font-size: 1.6rem;
+            margin: 2rem 0 1rem;
+            color: #ffb347;
+            text-align: left;
+        }
+
+        code {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.15rem 0.4rem;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.95em;
+            color:#ffb347 ;
+        }
+
+        /* ============================================================
+           ТАБЛИЦА
+           ============================================================ */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 0.9rem 1.1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            vertical-align: top;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.06);
+            font-weight: 600;
+            color: #ffb347;
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        tbody tr:last-child td { border-bottom: none; }
+
+        tbody tr { transition: background 0.25s ease; }
+        tbody tr:hover { background: rgba(102, 217, 255, 0.07); }
+
+        td:first-child {
+            font-weight: 600;
+            white-space: nowrap;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #ffb347;
+        }
+
+        /* ===== Кнопка «Назад» ===== */
+        .back {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.7rem 1.6rem;
+            border-radius: 30px;
+            background: rgba(255, 138, 0, 0.15);
+            border: 1px solid #ff8a00;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .back:hover {
+            background: #ff8a00;
+            color: #090a0f;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 138, 0, 0.4);
+        }
+
+        /* ===== Кнопка «Наверх» ===== */
+        .to-top {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .to-top:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        /* ===== Плавное появление ===== */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== Адаптация ===== */
+        @media (max-width: 900px) {
+            article h2 { font-size: 1.35rem; }
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 1.5rem 1rem 6rem 1rem; }
+            article h2 { font-size: 1.2rem; }
+            article p { font-size: 0.95rem; }
+            th, td { padding: 0.7rem 0.8rem; font-size: 0.85rem; }
+            .back { bottom: 20px; right: 20px; padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+            .to-top { bottom: 20px; left: 20px; width: 42px; height: 42px; }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <article>
+            <p class="fade-in" style="animation-delay: 0.1s;">
+                <strong>CSS (Cascading Style Sheets — «каскадные таблицы стилей»)</strong> — это язык,
+                который отвечает за внешний вид веб-страниц: цвета, шрифты, отступы, расположение
+                блоков и многое другое. Я подобрала для вас самое важное: что это за язык, как он
+                устроен, зачем нужен и какие есть нюансы.
+            </p>
+
+            <p class="fade-in" style="animation-delay: 0.2s;"><strong>Немного истории</strong></p>
+
+            <p class="fade-in" style="animation-delay: 0.3s;">
+                Концепцию CSS предложил Хокон Виум Ли в 1994 году, а первую спецификацию выпустил
+                консорциум W3C в 1996-м. Со временем язык сильно развивался: появились модули
+                (CSS2, затем CSS3), а в последние годы особенно активно развиваются инструменты
+                для сложной вёрстки — <code>Flexbox</code> (для гибких строк) и <code>Grid</code>
+                (для двумерных макетов). Также появились удобные фишки вроде CSS-переменных
+                (кастомных свойств) и функций (<code>calc()</code>, <code>clamp()</code>,
+                <code>min()</code>, <code>max()</code>).
+            </p>
+
+            <p class="fade-in" style="animation-delay: 0.4s;"><strong>Что он делает</strong></p>
+
+            <p class="fade-in" style="animation-delay: 0.5s;">
+                Главная идея CSS — разделить структуру контента и его визуальное оформление.
+                HTML задаёт каркас (заголовки, абзацы, списки), а CSS описывает, как этот контент
+                должен выглядеть. Это даёт несколько плюсов:
+            </p>
+
+            <p class="fade-in" style="animation-delay: 0.6s;">
+                — легко менять дизайн, не трогая структуру HTML;<br>
+                — можно повторно использовать стили на разных страницах;<br>
+                — улучшается доступность: CSS позволяет контролировать отображение текста,
+                что полезно для пользователей с ограниченными возможностями;<br>
+                — проще создавать адаптивные дизайны: с медиа-запросами можно менять отображение
+                под разные устройства.
+            </p>
+
+            <p class="fade-in" style="animation-delay: 0.7s;"><strong>Как это устроено</strong></p>
+
+            <p class="fade-in" style="animation-delay: 0.8s;">
+                Основа CSS — правила. Каждое правило состоит из трёх частей:
+            </p>
+
+            <p class="fade-in" style="animation-delay: 0.9s;">
+                <strong>Селектор.</strong> Указывает, к каким HTML-элементам применять стили.
+                Это может быть тег (<code>p</code>, <code>h1</code>), класс (<code>.button</code>),
+                идентификатор (<code>#header</code>), универсальный селектор (<code>*</code>)
+                или даже атрибут (<code>[type="text"]</code>).
+            </p>
+
+            <p class="fade-in" style="animation-delay: 1s;">
+                <strong>Свойство.</strong> Определяет, какую характеристику элемента вы хотите
+                изменить (например, <code>color</code> — цвет текста, <code>font-size</code> —
+                размер шрифта, <code>background-color</code> — цвет фона).
+            </p>
+
+            <p class="fade-in" style="animation-delay: 1.1s;">
+                <strong>Значение.</strong> Даёт конкретное значение для свойства (ключевое слово,
+                HEX-код, число, длина и т.д.).
+            </p>
+
+            <p class="fade-in" style="animation-delay: 1.2s;"><strong>Ключевые принципы</strong></p>
+
+            <p class="fade-in" style="animation-delay: 1.3s;">
+                <strong>Каскадность.</strong> Если к одному элементу применимо несколько правил,
+                порядок их следования в коде имеет значение. При одинаковой специфичности приоритет
+                у того правила, которое расположено ниже.
+            </p>
+
+            <p class="fade-in" style="animation-delay: 1.4s;">
+                <strong>Наследование.</strong> Некоторые свойства передаются от родительского элемента
+                к дочерним. Например, если задать шрифт для <code>&lt;body&gt;</code>, все текстовые
+                элементы внутри него его унаследуют, если где-то не переопределены.
+            </p>
+
+            <p class="fade-in" style="animation-delay: 1.5s;">
+                <strong>Специфичность.</strong> Это механизм, который решает конфликты: у разных
+                селекторов разный «вес», и правило с более высоким весом имеет приоритет.
+            </p>
+
+            <h2 class="fade-in" style="animation-delay: 1.6s;">Основные свойства CSS</h2>
+
+            <p class="fade-in" style="animation-delay: 1.65s;">
+                Ниже — базовый набор свойств, с которых начинается любое оформление: от цвета
+                и шрифтов до флекс-раскладки, анимаций и адаптивности.
+            </p>
+
+            <div class="table-wrap fade-in" style="animation-delay: 1.7s;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">Свойство</th>
+                            <th scope="col">Что делает</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>color</td><td>Цвет текста</td></tr>
+                        <tr><td>background</td><td>Фон: цвет, картинка, градиент</td></tr>
+                        <tr><td>font-family</td><td>Шрифт текста</td></tr>
+                        <tr><td>font-size</td><td>Размер шрифта</td></tr>
+                        <tr><td>font-weight</td><td>Насыщенность — жирный, тонкий</td></tr>
+                        <tr><td>line-height</td><td>Межстрочный интервал</td></tr>
+                        <tr><td>text-align</td><td>Выравнивание текста: left, center, right, justify</td></tr>
+                        <tr><td>margin</td><td>Внешние отступы от элемента</td></tr>
+                        <tr><td>padding</td><td>Внутренние отступы внутри элемента</td></tr>
+                        <tr><td>border</td><td>Рамка вокруг элемента</td></tr>
+                        <tr><td>border-radius</td><td>Скругление углов</td></tr>
+                        <tr><td>box-shadow</td><td>Тень под элементом или свечение</td></tr>
+                        <tr><td>width / height</td><td>Ширина и высота</td></tr>
+                        <tr><td>display</td><td>Тип отображения: block, inline, flex, grid, none</td></tr>
+                        <tr><td>flex / gap</td><td>Флекс-раскладка и расстояние между элементами</td></tr>
+                        <tr><td>justify-content</td><td>Выравнивание по главной оси во flex</td></tr>
+                        <tr><td>align-items</td><td>Выравнивание по поперечной оси</td></tr>
+                        <tr><td>position</td><td>Способ позиционирования: static, relative, absolute, fixed</td></tr>
+                        <tr><td>top / left / right / bottom</td><td>Смещение при позиционировании</td></tr>
+                        <tr><td>z-index</td><td>Порядок наложения элементов друг на друга</td></tr>
+                        <tr><td>opacity</td><td>Прозрачность от 0 до 1</td></tr>
+                        <tr><td>transform</td><td>Поворот, масштаб, наклон: rotate, scale, translate</td></tr>
+                        <tr><td>transition</td><td>Плавный переход между состояниями</td></tr>
+                        <tr><td>animation</td><td>Запуск анимации по ключевым кадрам</td></tr>
+                        <tr><td>@keyframes</td><td>Описание самой анимации — что и как меняется</td></tr>
+                        <tr><td>backdrop-filter</td><td>Размытие фона за элементом (эффект стекла)</td></tr>
+                        <tr><td>:hover</td><td>Стиль при наведении мыши на элемент</td></tr>
+                        <tr><td>@media</td><td>Медиа-запрос — стили для разных размеров экрана</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    </main>
+
+    <a href="index.html" class="back" aria-label="Вернуться на главную">← Назад</a>
+    <button class="to-top" id="toTop" aria-label="Наверх">↑</button>
+
+    <script>
+        // ===== Кнопка «Наверх» =====
+        const toTop = document.getElementById('toTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                toTop.classList.add('visible');
+            } else {
+                toTop.classList.remove('visible');
+            }
+        });
+
+        toTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ===== Отслеживание появления блоков =====
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
